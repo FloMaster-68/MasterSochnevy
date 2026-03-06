@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мастерская Сочневых — Контакты</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand">
+  <span class="mark"></span>
+  <span class="brand-text">
+    <span class="brand-top">Мастерская</span>
+    <span class="brand-main">Сочневых</span>
+  </span>
+</div>
+      <div class="links">
+        <a href="index.html">Главная</a>
+        <a href="shop.html">Каталог</a>
+        <a href="contacts.html">Контакты</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap section">
+
+  <h1>Контакты</h1>
+
+  <p class="muted" style="max-width:48ch;">
+    Если вы хотите сделать заказ, задать вопрос или обсудить индивидуальное изделие —
+    напишите нам в Telegram.
+  </p>
+
+  <p style="margin:24px 0 28px;">
+    <a class="btn" href="#" id="orderLink" target="_blank" rel="noreferrer">
+  Написать в ТГ
+</a>
+
+  </p>
+
+  <p class="muted" style="max-width:52ch;">
+    Мы отвечаем лично, помогаем с выбором, сроками и деталями.
+    Все изделия создаются вручную из натурального дерева.
+  </p>
+
+  <hr class="hr">
+
+  <p class="muted" style="max-width:52ch;">
+    В Telegram-канале мы делимся процессом, новыми работами и источниками вдохновения.
+  </p>
+
+  <p>
+    <a class="btn" href="#" id="channelLink" target="_blank" rel="noreferrer">
+  Перейти в ТГ канал
+</a>
+
+  </p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    © <span id="y"></span> Мастерская Сочневых
+  </div>
+</footer>
+
+<script>
+  document.getElementById("y").textContent = new Date().getFullYear();
+
+  /* ВРЕМЕННЫЕ ССЫЛКИ — заменим позже */
+  document.getElementById("orderLink").href = "https://t.me/Irina_AstroZvet";
+  document.getElementById("channelLink").href = "https://t.me/Flo68Master";
+</script>
+
+</body>
+</html>
