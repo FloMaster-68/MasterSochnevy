@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мастерская Сочневых — Каталог</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* модальное окно */
+    .modal-backdrop{ position:fixed; inset:0; background: rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:16px; z-index:50; }
+    .modal{ max-width: 920px; width:100%; background:#fff; border-radius:18px; border:1px solid #eee; overflow:hidden; }
+    .modal-head{ display:flex; justify-content:space-between; gap:12px; align-items:center; padding:14px 16px; border-bottom:1px solid #eee; }
+    .xbtn{ border:1px solid #ddd; background:#fff; border-radius:12px; padding:8px 12px; cursor:pointer; box-shadow: 0 6px 18px rgba(0,0,0,.10); }
+    .modal-body{ display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; padding:16px; }
+
+.modal-body .gallery-arrow{
+  opacity:0;
+}
+
+.modal-body:hover .gallery-arrow{
+  opacity:.75;
+}
+
+/* Стрелки галереи */
+.gallery-arrow{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(6px);
+
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+
+  opacity:.6;
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.gallery-arrow:hover{
+  opacity:1;
+  transform: scale(1.05);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+}
+
+  .gallery-main{
+  width:100%;
+  height: 360px;
+  object-fit: contain;          /* НЕ обрезаем */
+  object-position: center;
+background: #efe9e1;
+  border-radius:14px;
+  border:1px solid #eee;
+  touch-action: pan-y;
+}
+
+    .thumbs{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .thumbs img{ width:76px; height:76px; object-fit:cover; border-radius:12px; border:1px solid #eee; cursor:pointer; }
+    .thumbs img.active{ outline: 2px solid #111; }
+    .detail-list{ margin:10px 0 0; padding-left:18px; color:#444; line-height:1.6; }
+    @media (max-width: 900px){
+ .gallery-main{ height: 260px; }
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <nav>
+       <div class="brand">
+  <span class="mark"></span>
+  <span class="brand-text">
+    <span class="brand-top">Мастерская</span>
+    <span class="brand-main">Сочневых</span>
+  </span>
+</div>
+        <div class="links">
+          <a href="index.html">Главная</a>
+          <a href="shop.html">Каталог</a>
+          <a href="contacts.html">Контакты</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap section">
+    <h1 style="font-size:34px; margin: 10px 0 6px;">Каталог</h1>
+    <p class="muted" style="margin:0 0 12px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+  Нажми «Подробнее», чтобы посмотреть все фотографии и описание.
+</p>
+
+    <div class="toolbar">
+
+  <div class="filter">
+    <button id="filterBtn" class="btn">
+      Сортировка ▾
+    </button>
+
+    <div id="filterMenu" class="filter-menu">
+
+      <label>
+        <input type="checkbox" value="all" checked>
+        Все изделия
+      </label>
+
+      <label>
+        <input type="checkbox" value="Мебель">
+        Мебель
+      </label>
+
+      <label>
+        <input type="checkbox" value="Декор">
+        Декор
+      </label>
+
+      <label>
+        <input type="checkbox" value="В наличии">
+        В наличии
+      </label>
+
+      <label>
+        <input type="checkbox" value="Под заказ">
+        Под заказ
+      </label>
+
+    </div>
+  </div>
+
+</div>
+
+    <div id="list" class="grid3"></div>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="y"></span> Мастерская Сочневых</div>
+  </footer>
+
+  <!-- Модальное окно -->
+  <div id="backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <strong id="mTitle">Товар</strong>
+        <button class="xbtn" id="closeBtn">Закрыть</button>
+      </div>
+      <div class="modal-body">
+
+ <!-- Левая колонка: фото -->        
+<div style="position:relative;">
+  <button id="prevImg" class="xbtn gallery-arrow"
+  style="position:absolute; left:12px; top:50%; transform:translateY(-50%); z-index:2;">
+  ◀
+</button>
+
+  <img id="mainImg" class="gallery-main" src="" alt="">
+
+  <button id="nextImg" class="xbtn gallery-arrow"
+  style="position:absolute; right:12px; top:50%; transform:translateY(-50%); z-index:2;">
+  ▶
+</button>
+
+  <div id="thumbs" class="thumbs"></div>
+
+</div>
+
+<!-- Правая колонка: описание -->
+        <div>
+          <div class="muted" id="mBadges"></div>
+          <div class="price" id="mPrice"></div>
+          <p class="muted" id="mDesc"></p>
+          <ul class="detail-list" id="mDetails"></ul>
+          <p style="margin-top:14px;">
+            <a class="btn primary" id="mOrder" target="_blank" rel="noreferrer" href="#">Заказать / Сделать запрос
+</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="products.js"></script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+
+    const $list = document.getElementById("list");
+
+    const $backdrop = document.getElementById("backdrop");
+    const $closeBtn = document.getElementById("closeBtn");
+    const $mTitle = document.getElementById("mTitle");
+    const $mainImg = document.getElementById("mainImg");
+    const $thumbs = document.getElementById("thumbs");
+const $prevImg = document.getElementById("prevImg");
+const $nextImg = document.getElementById("nextImg");
+
+let currentImages = [];
+let currentIndex = 0;
+    const $mBadges = document.getElementById("mBadges");
+    const $mPrice = document.getElementById("mPrice");
+    const $mDesc = document.getElementById("mDesc");
+    const $mDetails = document.getElementById("mDetails");
+    const $mOrder = document.getElementById("mOrder");
+    
+const ORDER_TG = "https://t.me/Irina_AstroZvet";
+const filterBtn = document.getElementById("filterBtn");
+const filterMenu = document.getElementById("filterMenu");
+
+filterBtn.onclick = () => {
+  filterMenu.style.display =
+    filterMenu.style.display === "flex"
+      ? "none"
+      : "flex";
+};
+
+    function requestLink(p){
+      const text = encodeURIComponent(
+        `Здравствуйте! Хочу сделать запрос в Мастерской Сочневых.\n` +
+        `Изделие: ${p.title}\nКатегория: ${p.category}\nЦена: ${p.price}${p.currency}\nАртикул: ${p.id}\n` +
+        `Пожалуйста, подскажите наличие/срок изготовления и доставку.`
+      );
+      return `${ORDER_TG}?text=${text}`;
+    }
+
+    function openModal(p){
+      $mTitle.textContent = p.title;
+      $mBadges.innerHTML = `<span class="badge">${p.category}</span> <span class="badge">${p.availability}</span>`;
+      $mPrice.textContent = `${p.price}${p.currency}`;
+      $mDesc.textContent = p.description || "";
+
+      currentImages = (p.images && p.images.length) ? p.images : [p.image].filter(Boolean);
+currentIndex = 0;
+
+$mainImg.src = currentImages[0] || "";
+$mainImg.alt = p.title;
+
+    $thumbs.innerHTML = currentImages.map((src, i) =>
+  `<img data-i="${i}" src="${src}" alt="${p.title} фото ${i+1}">`
+).join("");
+
+const setActive = (idx) => {
+  const nodes = Array.from($thumbs.querySelectorAll("img"));
+  nodes.forEach((n, i) => n.classList.toggle("active", i === idx));
+};
+
+setActive(0);
+
+$thumbs.onclick = (e) => {
+  const t = e.target.closest("img");
+  if(!t) return;
+  currentIndex = Number(t.dataset.i);
+  $mainImg.src = currentImages[currentIndex];
+  updateThumbs();
+};
+
+
+      const details = Array.isArray(p.details) ? p.details : [];
+      $mDetails.innerHTML = details.map(x => `<li>${x}</li>`).join("");
+
+      $mOrder.href = requestLink(p);
+
+      $backdrop.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(){
+      $backdrop.style.display = "none";
+      document.body.style.overflow = "";
+    }
+
+    $closeBtn.addEventListener("click", closeModal);
+    $backdrop.addEventListener("click", (e) => {
+      if(e.target === $backdrop) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeModal();
+    });
+
+    function render(){
+      const active = Array.from(
+  document.querySelectorAll("#filterMenu input:checked")
+).map(el => el.value);
+
+const categoryFilters = active.filter(x =>
+  ["Мебель","Декор"].includes(x)
+);
+
+const statusFilters = active.filter(x =>
+  ["В наличии","Под заказ"].includes(x)
+);
+
+// если выбрали обе категории → считаем как "все"
+if (categoryFilters.length === 2) categoryFilters.length = 0;
+
+// если выбрали оба статуса → считаем как "все"
+if (statusFilters.length === 2) statusFilters.length = 0;
+
+const filtered = PRODUCTS.filter(p => {
+
+  const catOK =
+    categoryFilters.length === 0 ||
+    categoryFilters.includes(p.category);
+
+  const statusOK =
+    statusFilters.length === 0 ||
+    statusFilters.includes(p.availability);
+
+  return catOK && statusOK;
+
+});
+      $list.innerHTML = filtered.map(p => `
+        <article class="card">
+          <img src="${p.image}" alt="${p.title}" data-open="${p.id}" style="cursor:pointer;">
+          <div class="muted" style="margin-top:8px;">
+            <span class="badge">${p.category}</span>
+            <span class="badge">${p.availability}</span>
+          </div>
+          <h3 style="margin:10px 0 0;">${p.title}</h3>
+          <div class="price">${p.price}${p.currency}</div>
+          <p class="muted" style="margin:0 0 12px;">${p.description || ""}</p>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn" href="#" data-open="${p.id}">Подробнее</a>
+            <a class="btn primary" target="_blank" rel="noreferrer" href="${requestLink(p)}">Заказать</a>
+          </div>
+        </article>
+      `).join("") || `<p class="muted">Ничего не найдено.</p>`;
+
+      $list.querySelectorAll("[data-open]").forEach(a => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          const id = a.getAttribute("data-open");
+          const p = PRODUCTS.find(x => x.id === id);
+          if(p) openModal(p);
+        });
+      });
+    }
+
+function updateThumbs(){
+  const nodes = Array.from($thumbs.querySelectorAll("img"));
+  nodes.forEach((n, i) => n.classList.toggle("active", i === currentIndex));
+}
+
+function showIndex(idx){
+  if (!currentImages.length) return;
+  currentIndex = (idx + currentImages.length) % currentImages.length;
+  $mainImg.src = currentImages[currentIndex];
+  updateThumbs();
+}
+
+$prevImg.addEventListener("click", () => showIndex(currentIndex - 1));
+$nextImg.addEventListener("click", () => showIndex(currentIndex + 1));
+const $filterChecks = Array.from(document.querySelectorAll("#filterMenu input"));
+const $allCheck = document.querySelector('#filterMenu input[value="all"]');
+
+$filterChecks.forEach(ch => ch.addEventListener("change", () => {
+  if (ch.value === "all" && ch.checked) {
+    // включили "Все изделия" → выключаем остальное
+    $filterChecks.forEach(x => { if (x.value !== "all") x.checked = false; });
+  } else if (ch.value !== "all" && ch.checked) {
+    // включили любой другой → выключаем "Все изделия"
+    if ($allCheck) $allCheck.checked = false;
+  }
+
+  // если сняли все галочки → возвращаем "Все изделия"
+  const anyChecked = $filterChecks.some(x => x.checked);
+  if (!anyChecked && $allCheck) $allCheck.checked = true;
+
+  render();
+}));
+
+render();
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+$mainImg.addEventListener("touchstart", (e) => {
+  if (!e.touches || e.touches.length !== 1) return;
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+$mainImg.addEventListener("touchend", (e) => {
+  if (!currentImages.length) return;
+
+  const t = e.changedTouches && e.changedTouches[0];
+  if (!t) return;
+
+  const dx = t.clientX - touchStartX;
+  const dy = t.clientY - touchStartY;
+
+  // если жест больше вертикальный — не считаем свайпом
+  if (Math.abs(dy) > Math.abs(dx)) return;
+
+  // порог, чтобы случайные касания не листали
+  const threshold = 40; // пикселей
+  if (Math.abs(dx) < threshold) return;
+
+  if (dx < 0) {
+    // свайп влево -> следующее фото
+    showIndex(currentIndex + 1);
+  } else {
+    // свайп вправо -> предыдущее фото
+    showIndex(currentIndex - 1);
+  }
+}, { passive: true });
+
+
+  </script>
+
+
+</body>
+</html>
